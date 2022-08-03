@@ -5,6 +5,7 @@ from sqlalchemy import true
 from db.mongodb import get_database
 from model import User, UserOut
 from motor.motor_asyncio import AsyncIOMotorClient
+from helper import PyObjectId
 
 
 
@@ -13,7 +14,7 @@ collection_user_name = "users"
 
 router = APIRouter()
 
-@router.post("/create", tags=["users"])
+@router.post("/", tags=["users"])
 async def user_create(
     payload : User,
     db : AsyncIOMotorClient = Depends(get_database)
@@ -23,7 +24,7 @@ async def user_create(
     db_user = await db[database_name][collection_user_name].insert_one(new_user)
     return true
 
-@router.get('/get', tags=["users"])
+@router.get('/', tags=["users"])
 async def get_all_user(
     db : AsyncIOMotorClient = Depends(get_database)
 ):
@@ -31,11 +32,11 @@ async def get_all_user(
     db_users =  db[database_name][collection_user_name].find({})
     
     async for user in db_users:
-        users.append(UserOut(id = user["_id"] , name = user["name"] , phone=user["phone"]))
+        users.append(UserOut(id = user["_id"] , name = user["name"] , phone=user["phone"], age= user["age"]))
         
     return users
     
-@router.get('/get/{user_id}', tags=["users"])
+@router.get('/{user_id}', tags=["users"])
 async def get_user_by_id(
         user_id:str,
         db : AsyncIOMotorClient = Depends(get_database)
@@ -50,7 +51,7 @@ async def get_user_by_id(
         )
     return UserOut(**db_user)
 
-@router.patch("/update/{user_id}", tags=["users"])
+@router.patch("/{user_id}", tags=["users"])
 async def update_user(
     user_update:dict ,
     user_id:str,
@@ -72,7 +73,7 @@ async def update_user(
     
     return True
 
-@router.delete("/delete/{user_id}", tags=["users"])
+@router.delete("/{user_id}", tags=["users"])
 async def user_delete(
     user_id :str,
     db : AsyncIOMotorClient = Depends(get_database)
@@ -87,3 +88,4 @@ async def user_delete(
     deleted = await db[database_name][collection_user_name].delete_one({"_id" : ObjectId(user_id)})
     
     return True if deleted.deleted_count == 1 else False
+

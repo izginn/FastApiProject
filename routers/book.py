@@ -1,8 +1,10 @@
 from bson import ObjectId
 from fastapi import Depends,HTTPException,APIRouter
 from typing import List
+from pydantic import PyObject
 from sqlalchemy import true
 from db.mongodb import get_database
+from helper import PyObjectId
 from model import BooksOut, BooksOutWithUser,Book
 from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -20,7 +22,7 @@ async def book_create(
     db_book = await db[database_name][collection_book_name].insert_one(new_book)
     return true
 
-@router.get("/get", tags=["books"])
+@router.get("/", tags=["books"])
 async def get_all_books(
     db : AsyncIOMotorClient = Depends(get_database)
 ):
@@ -29,7 +31,8 @@ async def get_all_books(
     
     
     async for a in db_book:
-        books.append(BooksOut(id =a["_id"], author =a["author"] ,bookname= a["bookname"] , email= a["email"] ))
+        print(a["author"])
+        books.append(BooksOut(id =a["_id"], author =a["author"] ,bookname= a["bookname"]  ))
         
     return books
  
