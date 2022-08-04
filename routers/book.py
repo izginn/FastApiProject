@@ -31,7 +31,6 @@ async def get_all_books(
     
     
     async for a in db_book:
-        print(a["author"])
         books.append(BooksOut(id =a["_id"], author =a["author"] ,bookname= a["bookname"]  ))
         
     return books

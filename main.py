@@ -2,6 +2,8 @@ import time
 from fastapi import FastAPI ,APIRouter, Request
 from db.mongodb import connect_to_mongo
 from routers import user, book
+from starlette.middleware.cors import CORSMiddleware
+import main
 # from dependencies.dependencies import get_token_header,get_query_token
 
 app = FastAPI()#dependencies=[Depends(get_query_token)])
@@ -15,6 +17,7 @@ app.include_router(
  
 )
 app.include_router(book.router , prefix="/books")
+
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
     start_time = time.time()
@@ -24,4 +27,10 @@ async def add_process_time_header(request: Request, call_next):
     return response
 
 
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

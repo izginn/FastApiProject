@@ -31,8 +31,8 @@ class User(BaseModel):
 class UserOut(BaseModel):
     id : PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name : str
+    username : Optional[str]
     phone : Optional[str] = "111111111"
-    email: Optional[str]
     age:Optional[bytes]
     class Config:
         arbitrary_types_allowed = True

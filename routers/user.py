@@ -19,7 +19,7 @@ async def user_create(
     payload : User,
     db : AsyncIOMotorClient = Depends(get_database)
 ):
-    
+
     new_user = payload.dict()
     db_user = await db[database_name][collection_user_name].insert_one(new_user)
     return true
@@ -32,7 +32,7 @@ async def get_all_user(
     db_users =  db[database_name][collection_user_name].find({})
     
     async for user in db_users:
-        users.append(UserOut(id = user["_id"] , name = user["name"] , phone=user["phone"], age= user["age"]))
+        users.append(UserOut(id = user["_id"] , name = user["name"] ,username=user["username"], phone=user["phone"], age= user["age"]))
         
     return users
     
